@@ -1,5 +1,7 @@
 package Exercise
 
+import arithmetic.S99Int
+
 object Exercise extends App {
   def last(list: List[Any]): Any = {
     if (list.tail.isEmpty) {
@@ -17,6 +19,7 @@ object Exercise extends App {
         penultimate(list.head, list.tail)
       }
     }
+
     penultimate(list.head, list.tail)
   }
 
@@ -28,6 +31,7 @@ object Exercise extends App {
         nth(current + 1, index, list.tail)
       }
     }
+
     nth(0, index, list)
   }
 
@@ -39,6 +43,7 @@ object Exercise extends App {
         length(currentLength + 1, list.tail)
       }
     }
+
     length(0, list)
   }
 
@@ -76,6 +81,7 @@ object Exercise extends App {
         compress(list.head, currentList ::: List(current), list.tail)
       }
     }
+
     compress(list.head, List(), list.tail)
   }
 
@@ -91,6 +97,7 @@ object Exercise extends App {
         }
       }
     }
+
     pack(List(), List(list.head), list.tail)
   }
 
@@ -107,6 +114,7 @@ object Exercise extends App {
       val array = for (i <- 0 to tuple._1) yield tuple._2
       array.toList
     }
+
     list.flatMap(extract)
   }
 
@@ -122,6 +130,7 @@ object Exercise extends App {
         }
       }
     }
+
     encodeDirect(List(), (1, list.head), list.tail)
   }
 
@@ -134,12 +143,13 @@ object Exercise extends App {
       val array = for (i <- 0 until count) yield current
       array.toList
     }
+
     list.flatMap(extract(count, _))
   }
 
   def drop(multiple: Int, list: List[Any]): List[Any] = {
     list.zipWithIndex
-      .filter(x =>(x._2 + 1) % multiple != 0)
+      .filter(x => (x._2 + 1) % multiple != 0)
       .map(_._1)
   }
 
@@ -153,7 +163,8 @@ object Exercise extends App {
 
   def rotate(number: Int, list: List[Any]): List[Any] = {
     if (number > 0) {
-      rotate(number - 1, list.tail ::: List(list.head)) }
+      rotate(number - 1, list.tail ::: List(list.head))
+    }
     else if (number < 0) {
       rotate(number + 1, list.last :: list.dropRight(1))
     } else {
@@ -170,9 +181,63 @@ object Exercise extends App {
   }
 
   def range(from: Int, to: Int): List[Int] = {
-    (from to to).toList
+    def range(from: Int, to: Int, list: List[Int]): List[Int] = {
+      if (from > to) {
+        list
+      } else {
+        range(from, to - 1, to :: list)
+      }
+    }
+
+    range(from, to, List())
   }
 
-  print(range(4, 9))
+  def randomSelect(number: Int, list: List[Any]): List[Any] = {
+    def randomSelect(number: Int, list: List[Any], result: List[Any], random: scala.util.Random): List[Any] = {
+      if (number > result.size) {
+        val selected = removeAt(random.nextInt(list.size), list)
+        randomSelect(number, selected._1, selected._2 :: result, random)
+      } else {
+        result
+      }
+    }
 
+    randomSelect(number, list, List(), scala.util.Random)
+  }
+
+  def lotto(size: Int, max: Int): List[Int] = {
+    def lotto(size: Int, max: Int, random: scala.util.Random, list: List[Int]): List[Int] = {
+      if (size > list.size) {
+        lotto(size, max, random, (random.nextInt(max) + 1) :: list)
+      } else {
+        list
+      }
+    }
+
+    lotto(size, max, scala.util.Random, List())
+  }
+
+  def randomPermute(list: List[Any]): List[Any] = {
+    randomSelect(list.size, list)
+  }
+
+  def combinations(n: Int, list: List[Any]): List[List[Any]] = {
+    def flatMapSublists[A, B](list: List[A])(function: (List[A]) => List[B]): List[B] = {
+      list match {
+        case Nil => Nil
+        case sublist@(_ :: tail) => function(sublist) ::: flatMapSublists(tail)(function)
+      }
+    }
+
+    if (n == 0) {
+      List(Nil)
+    } else {
+      flatMapSublists(list) { sl =>
+        combinations(n - 1, sl.tail).map(sl.head :: _)
+      }
+    }
+  }
+
+  import S99Int._
+  print(35.isCoprimeTo(64))
 }
