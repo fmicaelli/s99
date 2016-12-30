@@ -238,6 +238,7 @@ object Exercise extends App {
     }
   }
 
-  import S99Int._
-  print(35.isCoprimeTo(64))
+  import logic.S99Logic._
+  table2((a: Boolean, b: Boolean) => a and (a or not(b)))
+
 }
